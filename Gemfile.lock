@@ -1,0 +1,23 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
+    ffi (1.9.17)
+    json-schema (2.8.0)
+      addressable (>= 2.4)
+    public_suffix (2.0.5)
+    ruby-termios (1.0.2)
+    thor (0.19.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  ffi
+  json-schema
+  ruby-termios
+  thor
+
+BUNDLED WITH
+   1.14.3

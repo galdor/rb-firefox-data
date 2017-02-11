@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+#
+# Copyright (c) 2017 Nicolas Martyanoff <khaelin@gmail.com>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+require 'bundler/setup'
+
+require 'firefox'
+require 'nss'
+require 'termios'
+require 'thor'
+
+class FirefoxData < Thor
+  class_option :profile,
+    desc: 'the name of the profile',
+    banner: 'NAME',
+    type: :string,
+    default: 'default',
+    aliases: ['p']
+
+  desc "search-logins REGEXP", "Search for logins in the password database"
+  option :password,
+    desc: 'ask for the master password',
+    type: :boolean,
+    aliases: ['w']
+  def search_logins(re_string)
+    re = Regexp.new(re_string, Regexp::IGNORECASE)
+
+    index = Firefox::ProfileIndex.new()
+    index.load()
+
+    profile = index.profiles[options[:profile]]
+
+    password = ''
+    if options[:password]
+      password = ask_password()
+    end
+
+    NSS.init(profile.path)
+    NSS.authenticate(password)
+
+    profile.load_logins(decrypt: true)
+    matches = profile.logins.select {|l| l.hostname.match? re}
+    renders = matches.map do |login|
+      "hostname  #{login.hostname}\n" + \
+      "username  #{login.username}\n" + \
+      "password  #{login.password}\n"
+    end
+    puts renders.join("\n")
+  end
+
+  no_commands do
+    def without_term_echo(&block)
+      attr = Termios.tcgetattr($stdin)
+
+      nattr = attr.dup
+      nattr.c_lflag &= ~(Termios::ECHO | Termios::ICANON)
+      Termios.tcsetattr($stdin, Termios::TCSANOW, nattr)
+
+      begin
+        yield
+      ensure
+        Termios.tcsetattr($stdin, Termios::TCSANOW, attr)
+      end
+    end
+
+    def ask_password()
+      printf('Password: ')
+
+      password = ''
+
+      without_term_echo() do
+        password = $stdin.gets().chomp()
+        puts ''
+      end
+
+      password
+    end
+  end
+end
+
+FirefoxData.start(ARGV)
