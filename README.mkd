@@ -1,0 +1,11 @@
+
+# firefox-data
+
+## Introduction
+The `firefox-data` gem is a library to extract data from firefox profiles.
+It currently has the ability to extract and decrypt usernames and passwords.
+
+I intend to add support for bookmarks and history in the future.
+
+## Contact
+If you have an idea or a question, email me at <khaelin@gmail.com>.
