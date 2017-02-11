@@ -7,5 +7,15 @@ It currently has the ability to extract and decrypt usernames and passwords.
 
 I intend to add support for bookmarks and history in the future.
 
+## Usage
+The library is not currently documented. The `firefox-data` script can be used
+to search for credentials:
+
+    firefox-data search-logins -p default github
+
+This command searches in the `default` profile for credentials where the
+hostname matches the regular expression `github`. The `-w` flag can be used to
+prompt for a master password if there is one.
+
 ## Contact
 If you have an idea or a question, email me at <khaelin@gmail.com>.
