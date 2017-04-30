@@ -18,4 +18,9 @@ Gem::Specification.new do |s|
   s.files = FileList['firefox-data.gemspec', 'LICENSE',
                      'bin/*.rb', 'lib/**/*.rb']
   s.executables = ['firefox-data']
+
+  s.add_runtime_dependency 'ffi', '~> 1.9', '>= 1.9.17'
+  s.add_runtime_dependency 'json-schema', '~> 2.8', '>= 2.8.0'
+  s.add_runtime_dependency 'ruby-termios', '~> 1.0', '>= 1.0.2'
+  s.add_runtime_dependency 'thor', '~> 0.19', '>= 0.19.4'
 end
