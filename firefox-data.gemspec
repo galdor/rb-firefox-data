@@ -3,7 +3,7 @@ require 'rake'
 
 Gem::Specification.new do |s|
   s.name = 'firefox-data'
-  s.version = '1.0.0'
+  s.version = '1.0.1'
   s.date = '2017-02-11'
   s.summary = 'A library to extract data from firefox profiles.'
   s.description = 'The firefox-data library extracts various types of ' + \
